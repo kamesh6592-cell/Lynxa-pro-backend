@@ -1,3 +1,4 @@
+// api/lynxa.js
 import { getEnv } from '../../utils/env.js';
 import jwt from 'jsonwebtoken';
 import getNile from '../../utils/nile.js';
@@ -18,14 +19,15 @@ export default async function handler(req, res) {
   }
 
   const providedKey = authHeader.substring(7);
-  // Changed from JWT_SECRET to API_KEY_SECRET to match your Vercel env vars
-  const JWT_SECRET = getEnv('API_KEY_SECRET');
+  // Use the standardized JWT_SECRET for verification
+  const JWT_SECRET = getEnv('JWT_SECRET');
 
   let userData;
   try {
-    const decoded = jwt.verify(providedKey, JWT_SECRET);
-    userData = { email: decoded.email };
+    // First, verify the JWT signature
+    jwt.verify(providedKey, JWT_SECRET);
 
+    // Then, check the database to ensure it's not revoked or expired
     const nile = await getNile();
     const result = await nile.db.query(
       `SELECT * FROM api_keys WHERE api_key = $1 AND expires > NOW() AND revoked = FALSE`,
@@ -36,6 +38,8 @@ export default async function handler(req, res) {
     }
     userData = result.rows[0];
   } catch (err) {
+    // This catches both jwt.verify errors and DB errors
+    console.error('API Key verification failed:', err.message);
     return res.status(401).json({ error: 'Invalid or expired API key' });
   }
 
@@ -66,7 +70,8 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const error = await response.json();
-      return res.status(500).json({ error });
+      console.error('Groq API error:', error);
+      return res.status(500).json({ error: 'Failed to get response from AI', details: error });
     }
 
     const data = await response.json();
@@ -79,6 +84,7 @@ export default async function handler(req, res) {
       user: userData.email
     });
   } catch (error) {
+    console.error('Internal server error:', error);
     res.status(500).json({ success: false, error: 'Internal server error', message: error.message });
   }
 }
