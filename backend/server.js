@@ -79,7 +79,7 @@ app.post('/api/lynxa', async (req, res) => {
     res.json({
       success: true,
       response: data.choices[0].message.content,
-      model: 'Lynxa Pro (powered by Groq + Llama 3.3)',
+      model: 'Lynxa Pro (powered by AJ STUDIOZ)',
       usage: data.usage,
       developer: 'Nexariq - AJ STUDIOZ'
     });
