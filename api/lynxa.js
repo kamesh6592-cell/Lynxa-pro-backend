@@ -1,9 +1,7 @@
 // api/lynxa.js
-// FIX: Changed from '../../utils/env.js' to '../utils/env.js'
-import { getEnv } from '../utils/env.js'; 
-import jwt from 'jsonwebtoken';
-// FIX: Changed from '../../utils/nile.js' to '../utils/nile.js'
-import getNile from '../utils/nile.js'; 
+import { getEnv } from '../utils/env.js';
+// NOTE: We no longer need the 'jsonwebtoken' import
+import getNile from '../utils/nile.js';
 
 const LYNXA_SYSTEM_PROMPT = `You are Lynxa Pro, an advanced AI assistant developed by Nexariq, a sub-brand of AJ STUDIOZ. 
 Your identity: Name: Lynxa Pro, Developer: Nexariq (sub-brand of AJ STUDIOZ), Purpose: To provide intelligent, helpful, and professional assistance.
@@ -11,8 +9,6 @@ Your personality: Professional yet friendly, knowledgeable, clear and concise.
 Mention you're Lynxa Pro, developed by Nexariq, a sub-brand of AJ STUDIOZ when asked who you are.`;
 
 export default async function handler(req, res) {
-  console.log('--- lynxa function started ---');
-  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -24,22 +20,25 @@ export default async function handler(req, res) {
 
   const providedKey = authHeader.substring(7);
   let userData;
-  try {
-    const JWT_SECRET = getEnv('JWT_SECRET');
-    jwt.verify(providedKey, JWT_SECRET);
 
+  try {
+    // --- NEW VERIFICATION LOGIC ---
+    // We only need to check the database. No JWT verification.
     const nile = await getNile();
     const result = await nile.db.query(
       `SELECT * FROM api_keys WHERE api_key = $1 AND expires > NOW() AND revoked = FALSE`,
       [providedKey]
     );
+    
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid, expired, or revoked API key' });
     }
+    
     userData = result.rows[0];
+
   } catch (err) {
     console.error('API Key verification failed:', err.message);
-    return res.status(401).json({ error: 'Invalid or expired API key' });
+    return res.status(500).json({ error: 'Database error during authentication' });
   }
 
   const { message, model = 'llama-3.3-70b-versatile', max_tokens = 1000, conversation_history = [] } = req.body;
