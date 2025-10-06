@@ -1,13 +1,12 @@
 // api/generate-key.js
-import jwt from 'jsonwebtoken';
+import { randomBytes } from 'crypto'; // Import crypto for secure random string generation
 import { getEnv } from '../utils/env.js';
 import getNile from '../utils/nile.js';
 
 export default async function handler(req, res) {
-  // Add CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -24,27 +23,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Valid Gmail address required' });
     }
 
-    // Get the secret key using the standardized JWT_SECRET
-    const JWT_SECRET = getEnv('JWT_SECRET');
-    if (!JWT_SECRET) {
-      console.error('JWT_SECRET not found in environment');
-      return res.status(500).json({ error: 'Server configuration error' });
-    }
-
-    // Create JWT payload
-    const payload = {
-      email,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60) // 30 days
-    };
+    // --- NEW KEY GENERATION LOGIC ---
+    // Generate a secure random string (32 bytes will be 64 hex characters)
+    const randomPart = randomBytes(32).toString('hex');
+    const apiKey = `nxq_${randomPart}`;
     
-    const apiKey = jwt.sign(payload, JWT_SECRET);
-    const expires = new Date(payload.exp * 1000).toISOString();
+    // Set expiration for 30 days from now
+    const expires = new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toISOString();
 
     // Initialize Nile client
     const nile = await getNile();
     
-    // Insert into database
+    // Insert the new key into the database
     const result = await nile.db.query(
       `INSERT INTO api_keys (api_key, email, expires, revoked) 
        VALUES ($1, $2, $3, FALSE) 
