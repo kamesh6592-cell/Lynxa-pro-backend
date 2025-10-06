@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "framework": null,  // Explicitly disable framework detection
   "builds": [
     {
       "src": "api/**/*.js",
