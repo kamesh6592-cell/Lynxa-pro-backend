@@ -12,9 +12,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Valid Gmail address required' });
   }
 
-  const JWT_SECRET = getEnv('JWT_SECRET');
+  // Changed from JWT_SECRET to API_KEY_SECRET to match your Vercel env vars
+  const JWT_SECRET = getEnv('API_KEY_SECRET');
   if (!JWT_SECRET) {
-    return res.status(500).json({ error: 'JWT_SECRET not configured' });
+    return res.status(500).json({ error: 'API_KEY_SECRET not configured' });
   }
 
   const payload = {
