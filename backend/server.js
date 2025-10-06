@@ -1,4 +1,4 @@
-// server.js - Lynxa Pro API Server (Powered by Grok)
+// server.js - Lynxa Pro API Server (Powered by Groq + Llama)
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -26,12 +26,12 @@ Your personality:
 
 When users ask who you are or who created you, always mention that you're Lynxa Pro, developed by Nexariq, a sub-brand of AJ STUDIOZ.`;
 
-// Your custom endpoint that proxies to Grok
+// Your custom endpoint that proxies to Groq
 app.post('/api/lynxa', async (req, res) => {
   try {
     const { 
       message, 
-      model = 'grok-beta', 
+      model = 'llama-3.3-70b-versatile', 
       max_tokens = 1000,
       conversation_history = [] // Support for multi-turn conversations
     } = req.body;
@@ -53,19 +53,18 @@ app.post('/api/lynxa', async (req, res) => {
       }
     ];
 
-    // Call Grok API
-    const response = await fetch('https://api.x.ai/v1/chat/completions', {
+    // Call Groq API
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.GROK_API_KEY}`
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        messages: messages,
         model: model,
-        stream: false,
-        temperature: 0.7,
-        max_tokens: max_tokens
+        messages: messages,
+        max_tokens: max_tokens,
+        temperature: 0.7
       })
     });
 
@@ -80,7 +79,7 @@ app.post('/api/lynxa', async (req, res) => {
     res.json({
       success: true,
       response: data.choices[0].message.content,
-      model: 'Lynxa Pro (powered by Grok)',
+      model: 'Lynxa Pro (powered by Groq + Llama 3.3)',
       usage: data.usage,
       developer: 'Nexariq - AJ STUDIOZ'
     });
@@ -102,12 +101,19 @@ app.get('/api/info', (req, res) => {
     version: '1.0.0',
     developer: 'Nexariq',
     parent_company: 'AJ STUDIOZ',
+    powered_by: 'Groq + Llama 3.3 70B',
     description: 'Advanced AI assistant powered by cutting-edge language models',
     endpoints: {
       chat: '/api/lynxa',
       info: '/api/info',
       health: '/health'
-    }
+    },
+    available_models: [
+      'llama-3.3-70b-versatile',
+      'llama-3.1-8b-instant',
+      'mixtral-8x7b-32768',
+      'gemma2-9b-it'
+    ]
   });
 });
 
@@ -125,4 +131,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Lynxa Pro API Server running on port ${PORT}`);
   console.log(`📡 Endpoint: /api/lynxa`);
   console.log(`🏢 Developed by Nexariq - AJ STUDIOZ`);
+  console.log(`⚡ Powered by Groq + Llama 3.3`);
 });
