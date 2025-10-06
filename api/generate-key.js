@@ -22,15 +22,10 @@ export default async function handler(req, res) {
   const expires = new Date(payload.exp * 1000).toISOString();
 
   try {
-    // Optional multi-tenant: Create tenant if not exists
-    // const tenantRes = await nile.api.tenants.create({ name: email });
-    // const tenantId = (await tenantRes.json()).id;
-    // nile.tenantId = tenantId;  // Set context for this request
-
     await nile.db.query(
       `INSERT INTO api_keys (api_key, email, expires) VALUES ($1, $2, $3) RETURNING *`,
       [apiKey, email, expires]
-    );  // Add tenant_id: $4 if multi-tenant
+    );
 
     res.status(200).json({
       success: true,
