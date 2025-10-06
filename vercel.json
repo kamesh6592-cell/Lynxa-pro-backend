@@ -24,7 +24,7 @@
       "dest": "/api/info.js"
     },
     {
-      "src": "/api/keys/revoke",  // Optional
+      "src": "/api/keys/revoke",  
       "dest": "/api/revoke-key.js"
     }
   ]
