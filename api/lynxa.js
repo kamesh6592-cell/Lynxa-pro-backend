@@ -1,7 +1,9 @@
 // api/lynxa.js
-import { getEnv } from '../../utils/env.js';
+// FIX: Changed from '../../utils/env.js' to '../utils/env.js'
+import { getEnv } from '../utils/env.js'; 
 import jwt from 'jsonwebtoken';
-import getNile from '../../utils/nile.js';
+// FIX: Changed from '../../utils/nile.js' to '../utils/nile.js'
+import getNile from '../utils/nile.js'; 
 
 const LYNXA_SYSTEM_PROMPT = `You are Lynxa Pro, an advanced AI assistant developed by Nexariq, a sub-brand of AJ STUDIOZ. 
 Your identity: Name: Lynxa Pro, Developer: Nexariq (sub-brand of AJ STUDIOZ), Purpose: To provide intelligent, helpful, and professional assistance.
@@ -9,6 +11,8 @@ Your personality: Professional yet friendly, knowledgeable, clear and concise.
 Mention you're Lynxa Pro, developed by Nexariq, a sub-brand of AJ STUDIOZ when asked who you are.`;
 
 export default async function handler(req, res) {
+  console.log('--- lynxa function started ---');
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -19,15 +23,11 @@ export default async function handler(req, res) {
   }
 
   const providedKey = authHeader.substring(7);
-  // Use the standardized JWT_SECRET for verification
-  const JWT_SECRET = getEnv('JWT_SECRET');
-
   let userData;
   try {
-    // First, verify the JWT signature
+    const JWT_SECRET = getEnv('JWT_SECRET');
     jwt.verify(providedKey, JWT_SECRET);
 
-    // Then, check the database to ensure it's not revoked or expired
     const nile = await getNile();
     const result = await nile.db.query(
       `SELECT * FROM api_keys WHERE api_key = $1 AND expires > NOW() AND revoked = FALSE`,
@@ -38,7 +38,6 @@ export default async function handler(req, res) {
     }
     userData = result.rows[0];
   } catch (err) {
-    // This catches both jwt.verify errors and DB errors
     console.error('API Key verification failed:', err.message);
     return res.status(401).json({ error: 'Invalid or expired API key' });
   }
@@ -70,7 +69,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('Groq API error:', error);
+      console.error('Groq API returned an error:', error);
       return res.status(500).json({ error: 'Failed to get response from AI', details: error });
     }
 
@@ -84,7 +83,7 @@ export default async function handler(req, res) {
       user: userData.email
     });
   } catch (error) {
-    console.error('Internal server error:', error);
+    console.error('!!! UNEXPECTED ERROR in lynxa function !!!', error);
     res.status(500).json({ success: false, error: 'Internal server error', message: error.message });
   }
 }
