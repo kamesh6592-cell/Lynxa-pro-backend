@@ -9,19 +9,23 @@
   "routes": [
     {
       "src": "/api/keys/generate",
-      "dest": "api/generate-key.js"
+      "dest": "/api/generate-key.js"
     },
     {
       "src": "/api/lynxa",
-      "dest": "api/lynxa.js"
+      "dest": "/api/lynxa.js"
     },
     {
       "src": "/api/health",
-      "dest": "api/health.js"
+      "dest": "/api/health.js"
     },
     {
       "src": "/api/info",
-      "dest": "api/info.js"
+      "dest": "/api/info.js"
+    },
+    {
+      "src": "/api/keys/revoke",  // Optional
+      "dest": "/api/revoke-key.js"
     }
   ]
 }
