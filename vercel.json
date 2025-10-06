@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/api/keys/generate",
@@ -24,7 +18,7 @@
       "dest": "/api/info.js"
     },
     {
-      "src": "/api/keys/revoke",  
+      "src": "/api/keys/revoke",
       "dest": "/api/revoke-key.js"
     }
   ]
