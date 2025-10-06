@@ -1,6 +1,8 @@
 // api/revoke-key.js
-import { getEnv } from '../../utils/env.js';
-import getNile from '../../utils/nile.js';
+// FIX: Changed from '../../utils/env.js' to '../utils/env.js'
+import { getEnv } from '../utils/env.js';
+// FIX: Changed from '../../utils/nile.js' to '../utils/nile.js'
+import getNile from '../utils/nile.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -10,7 +12,6 @@ export default async function handler(req, res) {
 
   try {
     const nile = await getNile();
-    // Use parameterized query to prevent SQL injection
     const result = await nile.db.query(`UPDATE api_keys SET revoked = TRUE WHERE api_key = $1`, [apiKey]);
     
     if (result.rowCount === 0) {
