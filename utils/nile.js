@@ -1,5 +1,5 @@
 // utils/nile.js
-// THIS IS THE FIX: Change "import Nile" to "import { Nile}"
+// THIS IS THE FIX: Use curly braces for a named import
 import { Nile } from '@niledatabase/server'; 
 import { getEnv } from './env.js';
 
