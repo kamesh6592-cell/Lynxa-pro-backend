@@ -1,26 +1,23 @@
-export default function handler(req, res) {
+// api/info.js
+export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-  res.status(200).json({
-    name: 'Lynxa Pro',
-    version: '1.0.0',
-    developer: 'Nexariq',
-    parent_company: 'AJ STUDIOZ',
-    powered_by: 'Groq + Llama 3.3 70B',
-    description: 'Advanced AI assistant. Use API keys for access. Keys now use JWT with 30-day expiration.',
-    endpoints: {
-      generateKey: '/api/keys/generate (POST, body: {email: "user@gmail.com"})',
-      chat: '/api/lynxa (POST, requires API key)',
-      info: '/api/info',
-      health: '/health'
-    },
-    available_models: [
-      'llama-3.3-70b-versatile',
-      'llama-3.1-8b-instant',
-      'mixtral-8x7b-32768',
-      'gemma2-9b-it'
-    ],
-    auth: 'Required for /api/lynxa. Generate keys via /api/keys/generate. Keys expire in 30 days.'
-  });
+
+  try {
+    res.status(200).json({ 
+      name: 'Lynxa Pro Backend',
+      version: '1.0.0',
+      developer: 'Nexariq - AJ STUDIOZ',
+      endpoints: [
+        { path: '/api/keys/generate', method: 'POST', description: 'Generate a new API key' },
+        { path: '/api/keys/revoke', method: 'POST', description: 'Revoke an API key' },
+        { path: '/api/lynxa', method: 'POST', description: 'Chat with Lynxa Pro AI' },
+        { path: '/api/health', method: 'GET', description: 'Check service health' },
+        { path: '/api/info', method: 'GET', description: 'Get service information' }
+      ]
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }
