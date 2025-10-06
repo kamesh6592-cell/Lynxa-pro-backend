@@ -1,7 +1,7 @@
 {
-  "name": "grok-api-proxy",
+  "name": "lynxa-pro-api",
   "version": "1.0.0",
-  "description": "Proxy server for Grok API",
+  "description": "Lynxa Pro API Server with key management",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
