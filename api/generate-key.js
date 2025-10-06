@@ -1,47 +1,75 @@
 import jwt from 'jsonwebtoken';
-import { getEnv } from '../../utils/env.js';
-import getNile from '../../utils/nile.js';
+import { getEnv } from '../utils/env.js';
+import getNile from '../utils/nile.js';
 
 export default async function handler(req, res) {
+  // Add CORS headers for debugging
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email } = req.body;
-  if (!email || !email.endsWith('@gmail.com')) {
-    return res.status(400).json({ error: 'Valid Gmail address required' });
-  }
-
-  // Changed from JWT_SECRET to API_KEY_SECRET to match your Vercel env vars
-  const JWT_SECRET = getEnv('API_KEY_SECRET');
-  if (!JWT_SECRET) {
-    return res.status(500).json({ error: 'API_KEY_SECRET not configured' });
-  }
-
-  const payload = {
-    email,
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60)  // 30 days
-  };
-  const apiKey = jwt.sign(payload, JWT_SECRET);
-  const expires = new Date(payload.exp * 1000).toISOString();
-
-  let nile;
   try {
-    nile = await getNile();
-    if (!nile) throw new Error('Nile client not initialized');
+    const { email } = req.body;
+    
+    if (!email || !email.endsWith('@gmail.com')) {
+      return res.status(400).json({ error: 'Valid Gmail address required' });
+    }
+
+    // Get the secret key
+    const JWT_SECRET = getEnv('API_KEY_SECRET');
+    if (!JWT_SECRET) {
+      console.error('API_KEY_SECRET not found in environment');
+      return res.status(500).json({ error: 'API_KEY_SECRET not configured' });
+    }
+
+    // Create JWT payload
+    const payload = {
+      email,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60)  // 30 days
+    };
+    
+    const apiKey = jwt.sign(payload, JWT_SECRET);
+    const expires = new Date(payload.exp * 1000).toISOString();
+
+    // Initialize Nile client
+    const nile = await getNile();
+    
+    if (!nile) {
+      throw new Error('Nile client not initialized');
+    }
+
+    // Insert into database
     const result = await nile.db.query(
-      `INSERT INTO api_keys (api_key, email, expires) VALUES ($1, $2, $3) RETURNING *`,
+      `INSERT INTO api_keys (api_key, email, expires, revoked) 
+       VALUES ($1, $2, $3, FALSE) 
+       RETURNING *`,
       [apiKey, email, expires]
     );
-    res.status(200).json({
+
+    console.log('API key generated successfully for:', email);
+
+    return res.status(200).json({
       success: true,
       apiKey,
       message: `Key generated for ${email}. Keep secure! Expires in 30 days.`,
       expires
     });
+
   } catch (err) {
     console.error('Error in generate-key:', err);
-    res.status(500).json({ error: 'Server error', message: err.message });
+    return res.status(500).json({ 
+      error: 'Server error', 
+      message: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 }
