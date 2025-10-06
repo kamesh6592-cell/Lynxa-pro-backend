@@ -1,30 +1,34 @@
 // utils/nile.js
-import Nile from '@niledatabase/server';
+// THIS IS THE FIX: Change "import Nile" to "import { Nile}"
+import { Nile } from '@niledatabase/server'; 
 import { getEnv } from './env.js';
 
 export default async function getNile() {
   try {
-    // Prioritize the full connection string if available
+    console.log('Attempting to initialize Nile client...');
+    
     const connectionUrl = getEnv('NILEDB_URL');
     
     if (connectionUrl) {
-      console.log('Initializing Nile with connection string.');
+      console.log('Initializing Nile with NILEDB_URL.');
       const nile = await Nile({
-        db: { connectionString: connectionUrl }
+        db: connectionUrl,
+        basePath: getEnv('NILEDB_API_URL') 
       });
+      console.log('Nile client initialized successfully with connection string.');
       return nile;
     }
 
-    // Fallback to individual parameters if NILEDB_URL is not set
-    console.log('Initializing Nile with individual parameters.');
+    console.log('NILEDB_URL not found. Initializing Nile with individual parameters.');
     const nile = await Nile({
       user: getEnv('NILEDB_USER'),
       password: getEnv('NILEDB_PASSWORD'),
       basePath: getEnv('NILEDB_API_URL'),
     });
+    console.log('Nile client initialized successfully with individual parameters.');
     return nile;
   } catch (error) {
-    console.error('Nile initialization error:', error);
-    throw error;
+    console.error('Nile initialization failed. Details:', error);
+    throw new Error(`Failed to initialize Nile DB: ${error.message}`);
   }
 }
