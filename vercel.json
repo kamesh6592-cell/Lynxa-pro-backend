@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/keys/generate",
+      "dest": "api/generate-key.js"
+    },
+    {
+      "src": "/api/lynxa",
+      "dest": "api/lynxa.js"
+    },
+    {
+      "src": "/api/health",
+      "dest": "api/health.js"
+    },
+    {
+      "src": "/api/info",
+      "dest": "api/info.js"
+    }
+  ],
+  "env": {
+    "GROQ_API_KEY": "@groq_api_key",
+    "API_KEY_SECRET": "@api_key_secret"
+  }
+}
