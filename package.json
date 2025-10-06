@@ -5,9 +5,13 @@
     "dev": "vercel dev"
   },
   "dependencies": {
-    "node-fetch": "^3.3.2"
+    "@vercel/kv": "^1.0.0",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "vercel": "^34.0.0"
+  },
+  "engines": {
+    "node": "20"
   }
 }
