@@ -1,7 +1,7 @@
 {
   "name": "lynxa-pro-backend",
   "version": "1.0.0",
-  "type": "module",  // Add this to avoid ESM/CommonJS issues
+  "type": "module", 
   "scripts": {
     "dev": "vercel dev"
   },
