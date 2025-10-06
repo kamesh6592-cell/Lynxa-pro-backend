@@ -1,12 +1,13 @@
+// api/generate-key.js
 import jwt from 'jsonwebtoken';
 import { getEnv } from '../utils/env.js';
 import getNile from '../utils/nile.js';
 
 export default async function handler(req, res) {
-  // Add CORS headers for debugging
+  // Add CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -23,18 +24,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Valid Gmail address required' });
     }
 
-    // Get the secret key
-    const JWT_SECRET = getEnv('API_KEY_SECRET');
+    // Get the secret key using the standardized JWT_SECRET
+    const JWT_SECRET = getEnv('JWT_SECRET');
     if (!JWT_SECRET) {
-      console.error('API_KEY_SECRET not found in environment');
-      return res.status(500).json({ error: 'API_KEY_SECRET not configured' });
+      console.error('JWT_SECRET not found in environment');
+      return res.status(500).json({ error: 'Server configuration error' });
     }
 
     // Create JWT payload
     const payload = {
       email,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60)  // 30 days
+      exp: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60) // 30 days
     };
     
     const apiKey = jwt.sign(payload, JWT_SECRET);
@@ -43,10 +44,6 @@ export default async function handler(req, res) {
     // Initialize Nile client
     const nile = await getNile();
     
-    if (!nile) {
-      throw new Error('Nile client not initialized');
-    }
-
     // Insert into database
     const result = await nile.db.query(
       `INSERT INTO api_keys (api_key, email, expires, revoked) 
@@ -68,8 +65,7 @@ export default async function handler(req, res) {
     console.error('Error in generate-key:', err);
     return res.status(500).json({ 
       error: 'Server error', 
-      message: err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+      message: err.message
     });
   }
 }
