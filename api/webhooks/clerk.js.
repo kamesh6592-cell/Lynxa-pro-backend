@@ -1,46 +1,60 @@
-// pages/api/webhooks/clerk.js
-import { getEnv } from '../../../utils/env.js';
-import getNile from '../../../utils/nile.js';
+// api/webhooks/clerk.js (SECURE VERSION)
+import { Webhook } from 'svix'; // Import the Webhook class from svix
+import { getEnv } from '../../utils/env.js';
+import getNile from '../../utils/nile.js';
 
 export default async function handler(req, res) {
-  // 1. Verify the webhook signature to ensure it's from Clerk
+  // 1. Get the webhook secret from your environment variables
   const webhookSecret = getEnv('CLERK_WEBHOOK_SECRET');
+
+  // 2. Get the headers from the request
   const svix_id = req.headers["svix-id"];
   const svix_timestamp = req.headers["svix-timestamp"];
   const svix_signature = req.headers["svix-signature"];
 
+  // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return res.status(400).json({ error: 'Missing webhook headers' });
+    return res.status(400).json({ error: 'Error occurred -- no svix headers' });
   }
-  
-  // For simplicity, we are skipping signature verification here,
-  // but in a production app, you MUST verify the signature.
-  // You can use the `svix` library for this.
-  // npm install svix
-  // const wh = new Webhook(webhookSecret);
-  // const payload = wh.verify(JSON.stringify(req.body), headers);
-  
-  const { type, data } = req.body;
 
-  // 2. Handle the 'user.created' event
-  if (type === 'user.created') {
-    console.log('Webhook received: user.created for', data.id);
+  // 3. Get the raw body
+  const payload = JSON.stringify(req.body);
+  
+  // 4. Create a new Svix instance with your secret
+  const wh = new Webhook(webhookSecret);
+
+  let evt;
+  try {
+    // 5. Verify the payload with the headers
+    evt = wh.verify(payload, {
+      "svix-id": svix_id,
+      "svix-timestamp": svix_timestamp,
+      "svix-signature": svix_signature,
+    });
+  } catch (err) {
+    console.error('Webhook verification failed:', err);
+    return res.status(400).json({ error: 'Webhook verification failed' });
+  }
+
+  // 6. Handle the verified event
+  const { id } = evt.data;
+  const eventType = evt.type;
+  
+  if (eventType === 'user.created') {
+    console.log(`Webhook verified: user.created for ${id}`);
     try {
       const nile = await getNile();
-      
-      // Extract the data we need from the Clerk payload
-      const { id, email_addresses, first_name, last_name } = data;
+      const { email_addresses, first_name, last_name } = evt.data;
       const email = email_addresses[0]?.email_address;
 
       if (!id || !email) {
         return res.status(400).json({ error: 'Invalid user data from Clerk' });
       }
 
-      // 3. Insert the new user into our database
       await nile.db.query(
         `INSERT INTO users (id, email, first_name, last_name) 
          VALUES ($1, $2, $3, $4) 
-         ON CONFLICT (id) DO NOTHING`, // Prevent errors if the user already exists
+         ON CONFLICT (id) DO NOTHING`,
         [id, email, first_name, last_name]
       );
 
@@ -53,6 +67,6 @@ export default async function handler(req, res) {
     }
   }
 
-  // 4. Respond to Clerk that we received the webhook
-  res.status(200).json({ message: 'Webhook received, but not a user.created event' });
+  // Respond to Clerk that we received the webhook
+  res.status(200).json({ message: 'Webhook received' });
 }
