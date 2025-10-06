@@ -1,6 +1,6 @@
 import { getEnv } from '../../utils/env.js';
 import jwt from 'jsonwebtoken';
-import nile from '../../utils/nile.js';
+import getNile from '../../utils/nile.js';
 
 const LYNXA_SYSTEM_PROMPT = `You are Lynxa Pro, an advanced AI assistant developed by Nexariq, a sub-brand of AJ STUDIOZ. 
 Your identity: Name: Lynxa Pro, Developer: Nexariq (sub-brand of AJ STUDIOZ), Purpose: To provide intelligent, helpful, and professional assistance.
@@ -25,6 +25,7 @@ export default async function handler(req, res) {
     const decoded = jwt.verify(providedKey, JWT_SECRET);
     userData = { email: decoded.email };
 
+    const nile = await getNile();
     const result = await nile.db.query(
       `SELECT * FROM api_keys WHERE api_key = $1 AND expires > NOW() AND revoked = FALSE`,
       [providedKey]
