@@ -1,0 +1,13 @@
+{
+  "name": "lynxa-pro-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "vercel": "^34.0.0"
+  }
+}
