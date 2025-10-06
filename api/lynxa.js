@@ -1,7 +1,7 @@
-import crypto from 'crypto';
+import crypto from 'crypto';  // If keeping hash; optional
 import { getEnv } from '../../utils/env.js';
 import jwt from 'jsonwebtoken';
-import { kv } from '@vercel/kv';
+import nile from '../../utils/nile.js';
 
 const LYNXA_SYSTEM_PROMPT = `You are Lynxa Pro, an advanced AI assistant developed by Nexariq, a sub-brand of AJ STUDIOZ. 
 Your identity: Name: Lynxa Pro, Developer: Nexariq (sub-brand of AJ STUDIOZ), Purpose: To provide intelligent, helpful, and professional assistance.
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'API key required: Authorization: Bearer <key>' });
   }
 
-  const providedKey = authHeader.substring(7); // This is now the JWT
+  const providedKey = authHeader.substring(7);
   const JWT_SECRET = getEnv('JWT_SECRET');
 
   let userData;
@@ -26,33 +26,17 @@ export default async function handler(req, res) {
     const decoded = jwt.verify(providedKey, JWT_SECRET);
     userData = { email: decoded.email };
 
-    // Optional: Check for revocation in KV
-    const isRevoked = await kv.get(`revoke:${providedKey}`);
-    if (isRevoked === 'true') {
-      return res.status(401).json({ error: 'Revoked API key' });
+    // Check DB for expiration/revocation (JWT exp is fallback)
+    const result = await nile.db.query(
+      `SELECT * FROM api_keys WHERE api_key = $1 AND expires > NOW() AND revoked = FALSE`,
+      [providedKey]
+    );
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid, expired, or revoked API key' });
     }
+    userData = result.rows[0];  // Full DB row
   } catch (err) {
     return res.status(401).json({ error: 'Invalid or expired API key' });
-  }
-
-  // Fallback for legacy hashed keys (if needed; remove if fully migrating to JWT)
-  if (!userData) {
-    const API_KEY_SECRET = getEnv('API_KEY_SECRET');
-    const providedHash = crypto
-      .createHmac('sha256', API_KEY_SECRET)
-      .update(providedKey)
-      .digest('hex');
-
-    const userDataStr = await kv.get(providedHash);
-    if (!userDataStr) {
-      return res.status(401).json({ error: 'Invalid API key' });
-    }
-    userData = JSON.parse(userDataStr);
-
-    if (new Date(userData.expires) < new Date()) {
-      await kv.del(providedHash);
-      return res.status(401).json({ error: 'Expired API key' });
-    }
   }
 
   const { message, model = 'llama-3.3-70b-versatile', max_tokens = 1000, conversation_history = [] } = req.body;
