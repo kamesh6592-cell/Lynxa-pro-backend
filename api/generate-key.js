@@ -13,6 +13,10 @@ export default async function handler(req, res) {
   }
 
   const JWT_SECRET = getEnv('JWT_SECRET');
+  if (!JWT_SECRET) {
+    return res.status(500).json({ error: 'JWT_SECRET not configured' });
+  }
+
   const payload = {
     email,
     iat: Math.floor(Date.now() / 1000),
@@ -24,11 +28,11 @@ export default async function handler(req, res) {
   let nile;
   try {
     nile = await getNile();
-    await nile.db.query(
+    if (!nile) throw new Error('Nile client not initialized');
+    const result = await nile.db.query(
       `INSERT INTO api_keys (api_key, email, expires) VALUES ($1, $2, $3) RETURNING *`,
       [apiKey, email, expires]
     );
-
     res.status(200).json({
       success: true,
       apiKey,
@@ -36,7 +40,7 @@ export default async function handler(req, res) {
       expires
     });
   } catch (err) {
-    console.error('DB error:', err);
-    res.status(500).json({ error: 'Database error', message: err.message });
+    console.error('Error in generate-key:', err);
+    res.status(500).json({ error: 'Server error', message: err.message });
   }
 }
