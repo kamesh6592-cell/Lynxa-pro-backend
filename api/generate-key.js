@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { getEnv } from '../../utils/env.js';
-import nile from '../../utils/nile.js';
+import getNile from '../../utils/nile.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -21,7 +21,9 @@ export default async function handler(req, res) {
   const apiKey = jwt.sign(payload, JWT_SECRET);
   const expires = new Date(payload.exp * 1000).toISOString();
 
+  let nile;
   try {
+    nile = await getNile();
     await nile.db.query(
       `INSERT INTO api_keys (api_key, email, expires) VALUES ($1, $2, $3) RETURNING *`,
       [apiKey, email, expires]
