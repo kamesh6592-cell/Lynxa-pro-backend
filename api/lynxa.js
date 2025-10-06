@@ -1,4 +1,3 @@
-import crypto from 'crypto';  // If keeping hash; optional
 import { getEnv } from '../../utils/env.js';
 import jwt from 'jsonwebtoken';
 import nile from '../../utils/nile.js';
@@ -26,7 +25,6 @@ export default async function handler(req, res) {
     const decoded = jwt.verify(providedKey, JWT_SECRET);
     userData = { email: decoded.email };
 
-    // Check DB for expiration/revocation (JWT exp is fallback)
     const result = await nile.db.query(
       `SELECT * FROM api_keys WHERE api_key = $1 AND expires > NOW() AND revoked = FALSE`,
       [providedKey]
@@ -34,7 +32,7 @@ export default async function handler(req, res) {
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid, expired, or revoked API key' });
     }
-    userData = result.rows[0];  // Full DB row
+    userData = result.rows[0];
   } catch (err) {
     return res.status(401).json({ error: 'Invalid or expired API key' });
   }
@@ -66,7 +64,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const error = await response.json();
-      return res.status(response.status).json({ error });
+      return res.status(500).json({ error });
     }
 
     const data = await response.json();
