@@ -2,6 +2,18 @@
   "version": 2,
   "routes": [
     {
+      "src": "/",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/meow.html",
+      "dest": "/public/meow.html"
+    },
+    {
+      "src": "/aj-logo.jpg",
+      "dest": "/public/aj-logo.jpg"
+    },
+    {
       "src": "/api/keys/generate",
       "dest": "/api/generate-key.js"
     },
@@ -20,6 +32,10 @@
     {
       "src": "/api/keys/revoke",
       "dest": "/api/revoke-key.js"
+    },
+    {
+      "src": "/api/user/keys",
+      "dest": "/api/user/keys.js"
     }
   ]
 }
