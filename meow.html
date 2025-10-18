@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AJ STUDIOZ - Backend</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Arvo'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/jpeg" href="aj-logo.jpg">
+  <link rel="apple-touch-icon" href="aj-logo.jpg">
+  <link rel="shortcut icon" href="aj-logo.jpg">
+  
+  <style>
+    /*======================
+    Main Page Design
+    =======================*/
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      font-family: 'Arvo', serif;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      align-items: center;
+    }
+    
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .page_404 { 
+      padding: 40px 0; 
+      width: 100%;
+    }
+    
+    .container {
+      max-width: 1200px;
+    }
+    
+    .brand-header {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeInDown 1s ease-out;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .brand-logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 3px solid rgba(255,255,255,0.3);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      animation: logoPulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .brand-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FF6347, #FF69B4, #9370DB, #00BFFF, #32CD32);
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease infinite;
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .brand-subtitle {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 2px;
+    }
+    
+    .error-container {
+      position: relative;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .four_zero_four_bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      z-index: 1;
+      animation: gentleFloat 8s ease-in-out infinite;
+    }
+    
+    @keyframes gentleFloat {
+      0%, 100% { 
+        transform: translateY(0) scale(1);
+      }
+      50% { 
+        transform: translateY(-15px) scale(1.02);
+      }
+    }
+    
+    .error-code {
+      position: relative;
+      z-index: 2;
+      font-size: 120px;
+      text-align: center;
+      margin: 0;
+      color: transparent;
+      background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      animation: codePulse 3s infinite;
+    }
+    
+    @keyframes codePulse {
+      0% { 
+        transform: scale(1);
+        opacity: 0.9;
+      }
+      50% { 
+        transform: scale(1.05);
+        opacity: 1;
+      }
+      100% { 
+        transform: scale(1);
+        opacity: 0.9;
+      }
+    }
+    
+    .contant_box_404 { 
+      text-align: center;
+      animation: fadeInUp 1s ease-out 0.5s both;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .contant_box_404 h3 {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    
+    .contant_box_404 p {
+      font-size: 1.2rem;
+      margin-bottom: 25px;
+      color: rgba(255,255,255,0.9);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .link_404 { 
+      color: #fff !important;
+      padding: 12px 35px;
+      background: #39ac31;
+      margin: 15px 10px;
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      cursor: pointer;
+    }
+    
+    .link_404::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: 0.5s;
+      z-index: -1;
+    }
+    
+    .link_404:hover {
+      background: #2e8a27;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      text-decoration: none;
+      color: #fff !important;
+    }
+    
+    .link_404:hover::before {
+      left: 100%;
+    }
+    
+    .link_404.secondary {
+      background: #2196F3;
+    }
+    
+    .link_404.secondary:hover {
+      background: #1976D2;
+    }
+    
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 25px;
+    }
+    
+    .social-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.2);
+      animation: fadeIn 1s ease-out 1s both;
+    }
+    
+    .social-icon:nth-child(1) { animation-delay: 1.2s; }
+    .social-icon:nth-child(2) { animation-delay: 1.4s; }
+    .social-icon:nth-child(3) { animation-delay: 1.6s; }
+    .social-icon:nth-child(4) { animation-delay: 1.8s; }
+    
+    .social-icon:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-5px) rotate(10deg);
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+      animation: fadeIn 1s ease-out 2s both;
+    }
+    
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(26,42,108,0.9), rgba(178,31,31,0.9));
+      margin: 2% auto;
+      padding: 0;
+      border-radius: 20px;
+      width: 95%;
+      max-width: 1100px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalSlideIn 0.5s ease-out;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-header {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #FFD700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .close {
+      color: #fff;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .close:hover {
+      background: rgba(255,255,255,0.2);
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: 20px;
+      color: #fff;
+    }
+
+    .status-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .status-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .status-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .status-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status-online { background-color: #4CAF50; }
+    .status-offline { background-color: #f44336; }
+    .status-loading { background-color: #ff9800; }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .api-endpoint {
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid #00BFFF;
+      padding: 12px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .api-endpoint:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-left-color: #32CD32;
+    }
+
+    .endpoint-method {
+      display: inline-block;
+      background: #4CAF50;
+      color: white;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    .endpoint-method.POST { background: #2196F3; }
+    .endpoint-method.DELETE { background: #f44336; }
+
+    .endpoint-url {
+      font-family: 'Courier New', monospace;
+      color: #FFD700;
+      font-size: 0.8rem;
+    }
+
+    .endpoint-description {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+
+    .health-status {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin: 15px 0;
+    }
+
+    .health-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .health-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+
+    .health-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 5px;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .action-btn {
+      background: #39ac31;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    .action-btn:hover {
+      background: #2e8a27;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      color: white;
+      text-decoration: none;
+    }
+
+    .action-btn.secondary {
+      background: #2196F3;
+    }
+
+    .action-btn.secondary:hover {
+      background: #1976D2;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .logs-container {
+      background: #000;
+      color: #0f0;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      height: 200px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+      margin-top: 10px;
+    }
+    
+    /* Animations */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .page_404 {
+        padding: 30px 0;
+      }
+      
+      .brand-title {
+        font-size: 2rem;
+      }
+      
+      .brand-subtitle {
+        font-size: 1rem;
+      }
+      
+      .error-container {
+        height: 300px;
+      }
+      
+      .error-code {
+        font-size: 80px;
+      }
+      
+      .contant_box_404 h3 {
+        font-size: 1.8rem;
+      }
+      
+      .brand-logo {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .four_zero_four_bg {
+        background-size: 80%;
+      }
+
+      .modal-content {
+        margin: 5% auto;
+        width: 98%;
+        max-height: 85vh;
+      }
+
+      .api-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .health-status {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .brand-title {
+        font-size: 1.8rem;
+      }
+      
+      .error-container {
+        height: 250px;
+      }
+      
+      .error-code {
+        font-size: 70px;
+      }
+      
+      .contant_box_404 h3 {
+        font-size: 1.6rem;
+      }
+      
+      .link_404 {
+        padding: 10px 25px;
+        font-size: 1rem;
+        margin: 10px 5px;
+      }
+      
+      .social-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+      
+
+      .health-status {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="page_404">
+    <div class="container">
+      <!-- Brand Header -->
+      <div class="brand-header">
+        <img src="aj-logo.jpg" alt="AJ STUDIOZ Logo" class="brand-logo">
+        <h1 class="brand-title">AJ STUDIOZ</h1>
+        <p class="brand-subtitle">LYNXA PRO BACKEND HOSTED</p>
+      </div>
+      
+      <div class="row">	
+        <div class="col-sm-12">
+          <div class="col-sm-10 col-sm-offset-1 text-center">
+            <!-- Error Container with Proper Layering -->
+            <div class="error-container">
+              <div class="four_zero_four_bg"></div>
+              <h1 class="error-code">200</h1>
+            </div>
+            
+            <div class="contant_box_404">
+              <h3 class="h2">Backend is Running!</h3>
+              <p>Your Lynxa Pro Backend API is live and operational!</p>
+              
+              <a href="/" class="link_404">
+                <i class="fas fa-home"></i> Go to Home
+              </a>
+              
+              <a href="#" class="link_404 secondary" onclick="openModal()">
+                <i class="fas fa-chart-line"></i> Check Status
+              </a>
+              
+              <div class="social-links">
+                <a href="#" class="social-icon">
+                  <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-icon">
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-icon">
+                  <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="social-icon">
+                  <i class="fab fa-linkedin-in"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer">
+        &copy; 2025 AJ STUDIOZ - LYNXA PRO BACKEND HOSTED. All rights reserved.
+      </div>
+    </div>
+  </section>
+
+  <!-- Backend Status Modal -->
+  <div id="statusModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-server"></i>
+          Backend Status Dashboard
+        </div>
+        <button class="close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Backend Status -->
+        <div class="status-card">
+          <div class="status-header">
+            <div class="status-title">
+              <i class="fas fa-heartbeat"></i>
+              System Health
+            </div>
+            <div class="status-indicator status-loading" id="backend-status"></div>
+          </div>
+          
+          <div class="health-status" id="health-metrics">
+            <div class="health-item">
+              <div class="health-value" id="uptime">--</div>
+              <div class="health-label">Uptime</div>
+            </div>
+            <div class="health-item">
+              <div class="health-value" id="memory">--</div>
+              <div class="health-label">Memory</div>
+            </div>
+            <div class="health-item">
+              <div class="health-value" id="response-time">--</div>
+              <div class="health-label">Response</div>
+            </div>
+            <div class="health-item">
+              <div class="health-value" id="version">--</div>
+              <div class="health-label">Version</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="status-card">
+          <div class="status-header">
+            <div class="status-title">
+              <i class="fas fa-network-wired"></i>
+              API Endpoints
+            </div>
+          </div>
+          
+          <div class="api-grid">
+            <div class="api-endpoint">
+              <span class="endpoint-method">GET</span>
+              <span class="endpoint-url">/api/health</span>
+              <div class="endpoint-description">Health check endpoint</div>
+            </div>
+            
+            <div class="api-endpoint">
+              <span class="endpoint-method">GET</span>
+              <span class="endpoint-url">/api/info</span>
+              <div class="endpoint-description">API information</div>
+            </div>
+            
+            <div class="api-endpoint">
+              <span class="endpoint-method">POST</span>
+              <span class="endpoint-url">/api/lynxa</span>
+              <div class="endpoint-description">Lynxa Pro AI model</div>
+            </div>
+            
+            <div class="api-endpoint">
+              <span class="endpoint-method">POST</span>
+              <span class="endpoint-url">/api/generate-key</span>
+              <div class="endpoint-description">Generate API key</div>
+            </div>
+            
+            <div class="api-endpoint">
+              <span class="endpoint-method">DELETE</span>
+              <span class="endpoint-url">/api/revoke-key</span>
+              <div class="endpoint-description">Revoke API key</div>
+            </div>
+            
+            <div class="api-endpoint">
+              <span class="endpoint-method">GET</span>
+              <span class="endpoint-url">/api/user/keys</span>
+              <div class="endpoint-description">Get user keys</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="action-btn" onclick="checkHealth()">
+            <i class="fas fa-heartbeat"></i>
+            Health Check
+          </button>
+          
+          <button class="action-btn secondary" onclick="refreshStatus()">
+            <i class="fas fa-sync-alt"></i>
+            Refresh
+          </button>
+          
+          <a href="/api/info" class="action-btn secondary" target="_blank">
+            <i class="fas fa-info-circle"></i>
+            API Info
+          </a>
+          
+          <button class="action-btn" onclick="testEndpoint()">
+            <i class="fas fa-flask"></i>
+            Test API
+          </button>
+        </div>
+
+        <!-- System Logs -->
+        <div class="status-card">
+          <div class="status-header">
+            <div class="status-title">
+              <i class="fas fa-terminal"></i>
+              System Status: <span id="footer-status" style="color: #FFD700;">Initializing...</span>
+            </div>
+          </div>
+          <div id="logs-container" class="logs-container">
+            <div>System initialized...</div>
+            <div>Ready for health checks...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let healthCheckInterval;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add interactive hover effects to social icons
+      const socialIcons = document.querySelectorAll('.social-icon');
+      socialIcons.forEach(icon => {
+        icon.addEventListener('mouseenter', function() {
+          this.style.transform = 'translateY(-8px) rotate(15deg)';
+        });
+        
+        icon.addEventListener('mouseleave', function() {
+          this.style.transform = 'translateY(0) rotate(0)';
+        });
+      });
+      
+      // Add click effect to the home button
+      const homeButton = document.querySelector('.link_404');
+      homeButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Create ripple effect
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.5);
+          transform: scale(0);
+          animation: ripple 0.6s linear;
+          width: ${size}px;
+          height: ${size}px;
+          top: ${y}px;
+          left: ${x}px;
+          pointer-events: none;
+          z-index: -1;
+        `;
+        
+        this.appendChild(ripple);
+        
+        // Remove ripple after animation
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+        
+        // Navigate after animation
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 800);
+      });
+      
+      // Add CSS for ripple animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes ripple {
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    });
+
+    // Modal Functions
+    function openModal() {
+      document.getElementById('statusModal').style.display = 'block';
+      initializeBackendMonitoring();
+    }
+
+    function closeModal() {
+      document.getElementById('statusModal').style.display = 'none';
+      if (healthCheckInterval) {
+        clearInterval(healthCheckInterval);
+        healthCheckInterval = null;
+      }
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('statusModal');
+      if (event.target == modal) {
+        closeModal();
+      }
+    }
+
+    // Backend monitoring functionality
+    function initializeBackendMonitoring() {
+      addLog('🚀 Initializing backend monitoring...');
+      checkHealth();
+      
+      // Set up periodic health checks
+      if (healthCheckInterval) clearInterval(healthCheckInterval);
+      healthCheckInterval = setInterval(checkHealth, 30000); // Check every 30 seconds
+      
+      addLog('✅ Backend monitoring initialized');
+      
+      // Add some startup logs for better UX
+      setTimeout(() => {
+        addLog('🌐 Lynxa Pro Backend API Dashboard loaded');
+        addLog('📡 Monitoring endpoints: health, info, lynxa, keys');
+      }, 1000);
+    }
+    
+    async function checkHealth() {
+      const statusIndicator = document.getElementById('backend-status');
+      const footerStatus = document.getElementById('footer-status');
+      
+      statusIndicator.className = 'status-indicator status-loading';
+      footerStatus.textContent = 'Checking...';
+      
+      addLog('🔍 Performing health check...');
+      
+      try {
+        const startTime = Date.now();
+        const response = await fetch('/api/health', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          }
+        });
+        
+        const responseTime = Date.now() - startTime;
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          statusIndicator.className = 'status-indicator status-online';
+          footerStatus.textContent = '🟢 Online & Healthy';
+          
+          // Update health metrics
+          updateHealthMetrics(data, responseTime);
+          
+          addLog(`✅ Health check passed (${responseTime}ms)`);
+        } else {
+          throw new Error(`HTTP ${response.status}`);
+        }
+      } catch (error) {
+        statusIndicator.className = 'status-indicator status-offline';
+        footerStatus.textContent = '🔴 Offline';
+        
+        addLog(`❌ Health check failed: ${error.message}`);
+        
+        // Reset metrics
+        document.getElementById('uptime').textContent = '--';
+        document.getElementById('memory').textContent = '--';
+        document.getElementById('response-time').textContent = '--';
+        document.getElementById('version').textContent = '--';
+      }
+    }
+    
+    function updateHealthMetrics(data, responseTime) {
+      document.getElementById('response-time').textContent = `${responseTime}ms`;
+      
+      // Update other metrics based on API response
+      if (data.uptime) {
+        document.getElementById('uptime').textContent = formatUptime(data.uptime);
+      } else {
+        document.getElementById('uptime').textContent = 'N/A';
+      }
+      
+      if (data.memory) {
+        document.getElementById('memory').textContent = `${data.memory}MB`;
+      } else {
+        document.getElementById('memory').textContent = 'N/A';
+      }
+      
+      if (data.version) {
+        document.getElementById('version').textContent = data.version;
+      } else {
+        document.getElementById('version').textContent = 'v1.0.0';
+      }
+    }
+    
+    function formatUptime(seconds) {
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      
+      if (days > 0) return `${days}d ${hours}h`;
+      if (hours > 0) return `${hours}h ${minutes}m`;
+      return `${minutes}m`;
+    }
+    
+    function refreshStatus() {
+      addLog('🔄 Refreshing all status indicators...');
+      checkHealth();
+      
+      // Add visual feedback
+      const button = event.target;
+      const originalHTML = button.innerHTML;
+      button.innerHTML = '<div class="loading-spinner"></div> Refreshing...';
+      button.disabled = true;
+      
+      setTimeout(() => {
+        button.innerHTML = originalHTML;
+        button.disabled = false;
+      }, 2000);
+    }
+    
+    async function testEndpoint() {
+      addLog('🧪 Testing API endpoint...');
+      
+      try {
+        const response = await fetch('/api/info');
+        const data = await response.json();
+        
+        if (response.ok) {
+          addLog(`✅ API test successful: ${JSON.stringify(data, null, 2)}`);
+          alert('🎉 API test successful! Check logs for details.');
+        } else {
+          throw new Error(`HTTP ${response.status}`);
+        }
+      } catch (error) {
+        addLog(`❌ API test failed: ${error.message}`);
+        alert(`⚠️ API test failed: ${error.message}`);
+      }
+    }
+    
+    function addLog(message) {
+      const logsContainer = document.getElementById('logs-container');
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = document.createElement('div');
+      logEntry.textContent = `[${timestamp}] ${message}`;
+      
+      logsContainer.appendChild(logEntry);
+      logsContainer.scrollTop = logsContainer.scrollHeight;
+      
+      // Keep only last 50 log entries
+      const logs = logsContainer.children;
+      if (logs.length > 50) {
+        logsContainer.removeChild(logs[0]);
+      }
+    }
+  </script>
+</body>
+</html>
