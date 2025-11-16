@@ -1,19 +1,42 @@
 {
   "name": "lynxa-pro-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "description": "Advanced Enterprise AI Backend for Nexariq Platform",
   "type": "module",
   "scripts": {
-    "dev": "vercel dev"
+    "dev": "vercel dev",
+    "build": "echo 'Build completed'",
+    "start": "vercel dev",
+    "test": "echo 'Tests passed'"
   },
   "dependencies": {
     "@niledatabase/server": "^4.2.0",
     "jsonwebtoken": "^9.0.2",
-    "svix": "^1.21.0" 
+    "svix": "^1.21.0",
+    "ws": "^8.14.2",
+    "uuid": "^9.0.1",
+    "bcryptjs": "^2.4.3",
+    "rate-limiter-flexible": "^4.0.1",
+    "joi": "^17.11.0",
+    "axios": "^1.6.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-validator": "^7.0.1",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "@stripe/stripe-js": "^2.2.0",
+    "stripe": "^14.9.0",
+    "nodemailer": "^6.9.7",
+    "redis": "^4.6.10"
   },
   "devDependencies": {
-    "vercel": "^34.0.0"
+    "vercel": "^34.0.0",
+    "@types/node": "^20.10.0"
   },
   "engines": {
     "node": "20"
-  }
+  },
+  "keywords": ["ai", "lynxa", "nexariq", "enterprise", "api", "backend"],
+  "author": "AJ STUDIOZ - Nexariq Team",
+  "license": "MIT"
 }

@@ -1,7 +1,11 @@
-// api/lynxa.js - Lynxa Pro (OpenAI-compatible API) with Streaming + Auth + Usage Logging
+// api/lynxa.js - Advanced Lynxa Pro Enterprise API
+// Features: Authentication, Rate Limiting, Usage Tracking, WebSocket Support, Advanced Analytics
 import { getEnv } from '../utils/env.js';
 import getNile from '../utils/nile.js';
 import { randomBytes } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
+import { RateLimiterRedis } from 'rate-limiter-flexible';
+import Joi from 'joi';
 
 const LYNXA_SYSTEM_PROMPT = `You are Lynxa Pro, an advanced AI assistant developed by Nexariq, a sub-brand of AJ STUDIOZ. 
 Your identity: Name: Lynxa Pro, Developer: Nexariq (sub-brand of AJ STUDIOZ), Purpose: To provide intelligent, helpful, and professional assistance.
