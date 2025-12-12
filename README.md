@@ -100,7 +100,49 @@ GET    /api/billing?action=subscription     # Subscription details
 POST   /api/billing?action=webhook         # Stripe webhook handler
 ```
 
-### 🧪 **API Testing Guide**
+### � **Available AI Models**
+
+#### Lynxa Pro Model
+- **Model ID**: `lynxa-pro` (default)
+- **Base**: Llama 3.3 70B Versatile via Groq
+- **Context Length**: Up to 32,768 tokens
+- **Features**: 
+  - Fast response times
+  - High-quality conversational AI
+  - Enterprise-grade performance
+  - Natural language understanding
+  - Code generation and analysis
+  - Multi-language support
+
+#### Model Parameters
+- **Default max_tokens**: 4096
+- **Default temperature**: 0.7
+- **Streaming**: Supported
+- **Chat format**: OpenAI-compatible
+
+#### Usage Examples
+```javascript
+// Standard conversation
+{
+  "model": "lynxa-pro",
+  "messages": [
+    {"role": "user", "content": "Hello!"}
+  ]
+}
+
+// With custom parameters
+{
+  "model": "lynxa-pro", 
+  "messages": [
+    {"role": "user", "content": "Explain AI"}
+  ],
+  "max_tokens": 500,
+  "temperature": 0.9,
+  "stream": true
+}
+```
+
+### �🧪 **API Testing Guide**
 
 #### 1. Health Check
 ```bash
