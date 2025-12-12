@@ -100,6 +100,121 @@ GET    /api/billing?action=subscription     # Subscription details
 POST   /api/billing?action=webhook         # Stripe webhook handler
 ```
 
+### 🧪 **API Testing Guide**
+
+#### 1. Health Check
+```bash
+curl -X GET "https://lynxa-pro-backend.vercel.app/api/health"
+```
+
+#### 2. API Information
+```bash
+curl -X GET "https://lynxa-pro-backend.vercel.app/api/info"
+```
+
+#### 3. Generate API Key
+```bash
+curl -X POST "https://lynxa-pro-backend.vercel.app/api/keys/generate" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "your-email@example.com"}'
+```
+**Response:**
+```json
+{
+  "success": true,
+  "key": "nxq_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "expires": "2026-12-12T13:18:01.529Z",
+  "tier": "free"
+}
+```
+
+#### 4. Test AI Chat (Lynxa Pro)
+```bash
+# Replace YOUR_API_KEY with the key from step 3
+curl -X POST "https://lynxa-pro-backend.vercel.app/api/lynxa" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "messages": [
+      {"role": "user", "content": "Hello, who are you?"}
+    ],
+    "model": "lynxa-pro",
+    "max_tokens": 150
+  }'
+```
+
+#### 5. Advanced AI Conversation
+```bash
+curl -X POST "https://lynxa-pro-backend.vercel.app/api/lynxa" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "messages": [
+      {"role": "user", "content": "What can you help me with?"}
+    ],
+    "model": "lynxa-pro",
+    "max_tokens": 300,
+    "temperature": 0.7
+  }'
+```
+
+#### 6. Streaming Response
+```bash
+curl -X POST "https://lynxa-pro-backend.vercel.app/api/lynxa" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "messages": [
+      {"role": "user", "content": "Tell me about artificial intelligence"}
+    ],
+    "model": "lynxa-pro",
+    "stream": true
+  }'
+```
+
+#### 7. PowerShell Testing (Windows)
+```powershell
+# Generate API Key
+$response = Invoke-RestMethod -Uri "https://lynxa-pro-backend.vercel.app/api/keys/generate" `
+  -Method POST -ContentType "application/json" `
+  -Body '{"email": "your-email@example.com"}'
+$apiKey = $response.key
+
+# Test AI Chat
+Invoke-RestMethod -Uri "https://lynxa-pro-backend.vercel.app/api/lynxa" `
+  -Method POST -ContentType "application/json" `
+  -Headers @{"Authorization" = "Bearer $apiKey"} `
+  -Body '{
+    "messages": [{"role": "user", "content": "Hello Lynxa!"}],
+    "model": "lynxa-pro"
+  }'
+```
+
+#### Expected Response Format
+```json
+{
+  "id": "msg_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "object": "chat.completion",
+  "model": "lynxa-pro",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hello! I'm Lynxa Pro, an advanced AI assistant developed by Nexariq, a sub-brand of AJ STUDIOZ..."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 25,
+    "completion_tokens": 50,
+    "total_tokens": 75
+  },
+  "developer": "Nexariq - AJ STUDIOZ"
+}
+```
+
 #### WebSocket & Real-time
 ```
 GET    /api/websocket               # WebSocket connection info

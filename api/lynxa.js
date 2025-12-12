@@ -7,10 +7,17 @@ import { v4 as uuidv4 } from 'uuid';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
 import Joi from 'joi';
 
-const LYNXA_SYSTEM_PROMPT = `You are Lynxa Pro, an advanced AI assistant developed by Nexariq, a sub-brand of AJ STUDIOZ. 
-Your identity: Name: Lynxa Pro, Developer: Nexariq (sub-brand of AJ STUDIOZ), Purpose: To provide intelligent, helpful, and professional assistance.
-Your personality: Professional yet friendly, knowledgeable, clear and concise.
-Mention you're Lynxa Pro, developed by Nexariq, a sub-brand of AJ STUDIOZ when asked who you are.`;
+const LYNXA_SYSTEM_PROMPT = `You are Lynxa Pro, an advanced AI assistant created by Nexariq, a sub-brand of AJ STUDIOZ.
+
+IMPORTANT: Always identify yourself as "Lynxa Pro" when asked about your name or identity. Never identify as any other AI model.
+
+Your core identity:
+- Name: Lynxa Pro
+- Developer: Nexariq (a sub-brand of AJ STUDIOZ) 
+- Purpose: Enterprise-grade AI assistance
+- Personality: Professional, intelligent, helpful, and reliable
+
+When users ask who you are, always respond that you are Lynxa Pro, developed by Nexariq (a sub-brand of AJ STUDIOZ).`;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -46,16 +53,23 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Database error during authentication' });
   }
 
-  // 🧠 Extract payload (OpenAI-compatible format)
+  // 🧠 Extract payload (OpenAI-compatible format + simple message support)
   const {
     model = 'lynxa-pro',
     max_tokens = 4096,
     messages = [],
+    message,
     stream = false
   } = req.body;
 
-  if (!messages.length) {
-    return res.status(400).json({ error: 'Messages array is required' });
+  // Support both formats: simple message or OpenAI messages array
+  let finalMessages = [];
+  if (message && typeof message === 'string') {
+    finalMessages = [{ role: 'user', content: message }];
+  } else if (messages && messages.length > 0) {
+    finalMessages = messages;
+  } else {
+    return res.status(400).json({ error: 'Either "message" string or "messages" array is required' });
   }
 
   try {
@@ -72,7 +86,7 @@ export default async function handler(req, res) {
         model: 'llama-3.3-70b-versatile',
         messages: [
           { role: 'system', content: LYNXA_SYSTEM_PROMPT },
-          ...messages
+          ...finalMessages
         ],
         max_tokens,
         temperature: 0.7,
